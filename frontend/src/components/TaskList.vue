@@ -7,21 +7,26 @@
       <list-filter />
 
     </b-col>
+
     <b-col cols="9">
+
       <b-list-group>
-        <!-- <transition-group name="fade"> -->
+
+        <b-list-group-item v-for="(atividade, index) in atividades" :key="index">
+
           <div class="d-flex justify-content-between align-items-center">
+
             <b-row>
               <b-form-checkbox
-                id="checkbox-6"
-                name="checkbox-6"
+                :id="atividade.titulo + '-' + id"
+                :name="atividade.titulo + '-' + id"
                 value="accepted"
                 unchecked-value="not_accepted"
               />
-            <div v-b-toggle.collapse-1>
-              Dapibus ac facilisis in
-              <b-icon-arrow-down />
-            </div>
+              <div v-b-toggle.id>
+                {{ atividade.titulo }}
+                <b-icon-arrow-down />
+              </div>
             </b-row>
 
             <div>
@@ -32,12 +37,15 @@
           </div>
 
           <b-collapse id="collapse-1" class="mt-2">
+            
             <b-card>
+
               <b-row>
                 <b-col>
                   <p>Víncular ao Endereço:</p>
                 </b-col>
               </b-row>
+
               <b-row>
                 <b-col cols="10">
                   <b-form-select size="sm"></b-form-select>
@@ -50,10 +58,13 @@
               </b-row>
 
             </b-card>
+
           </b-collapse>
 
-        <!-- </transition-group> -->
+        </b-list-group-item>
+
       </b-list-group>
+
     </b-col>
 
   </b-row>
@@ -76,6 +87,11 @@
 import ListFilter from './ListFilter';
 
 export default {
+  data() {
+    return {
+      atividades: [],
+    }
+  },
   computed: {
     sortedTasks: function () {
       return this.$store.getters.sortedTasks
@@ -91,9 +107,11 @@ export default {
   },
   created() {
     
-    this.$http.get('http://localhost:3000/atividades').then(resp => {
-      console.log(resp);
-    })
+    this.$http.get('http://localhost:3333/atividades').then(resp => {
+      console.log('Resp ', resp);
+      
+      this.atividades = resp.body.atividades;
+    });
     
   },
 }
