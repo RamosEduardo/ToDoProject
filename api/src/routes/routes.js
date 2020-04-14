@@ -1,11 +1,12 @@
 const express = require('express');
-
+const cors = require('cors');
 const routes = express.Router();
 
 const AtividadeController = require('../controller/AtividadeController');
 const EnderecoController = require('../controller/EnderecoController');
 
 routes.use(express.json());
+routes.use(cors());
 
 routes.post('/atividades', AtividadeController.create);
 routes.get('/atividades', AtividadeController.index);
