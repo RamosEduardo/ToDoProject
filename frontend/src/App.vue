@@ -1,17 +1,24 @@
 <template>
   <section class="todoapp">
     <input-task></input-task>
+
+    <modal />
+
     <task-list style="margin-top:10px"></task-list>
   </section>
 </template>
 <script>
+
 import InputTask from "./components/InputTask";
 import TaskList from "./components/TaskList";
+import Modal from './components/NewAddress';
+
 export default {
   name: "App",
   components: {
     "input-task": InputTask,
     "task-list": TaskList,
+    "modal": Modal,
   },
 };
 </script>

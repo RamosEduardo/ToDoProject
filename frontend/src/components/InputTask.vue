@@ -28,8 +28,12 @@ export default {
     addTask ($event) {
       let value = $event.target.value
       let task = this.createTask(value)
-      this.$store.commit('addTask', { task })
-      this.clearField($event)
+
+      this.$http.post('http://localhost:3333/atividades', task).then((resp) => {
+        console.log(resp);
+        
+        this.clearField($event)
+      });
     },
     createTask (value) {
       let task = new Task()

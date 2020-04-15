@@ -8,11 +8,11 @@ module.exports = {
 
   async create(req, res) {
     
-    const { cep, rua, numero, bairro, cidade, estado} = req.body;
+    const { cep, logradouro, numero, bairro, cidade, estado} = req.body;
 
     await connection('enderecos').insert({
       cep,
-      rua,
+      rua: logradouro,
       numero,
       bairro,
       cidade,
@@ -24,14 +24,14 @@ module.exports = {
 
   async update(req, res) {
     
-    const { cep, rua, numero, bairro, cidade, estado} = req.body;
+    const { cep, logradouro, numero, bairro, cidade, estado} = req.body;
     const { id } = req.params;
 
     await connection('enderecos')
     .where('id',id)
     .update({
       cep,
-      rua,
+      rua: logradouro,
       numero,
       bairro,
       cidade,

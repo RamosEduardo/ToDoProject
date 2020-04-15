@@ -4,8 +4,8 @@
 
     <b-col cols="3">
 
-      <list-filter />
-
+      <list-filter @adicionaFiltro='adicionaFiltro'/>
+    
     </b-col>
 
     <b-col cols="9">
@@ -17,47 +17,56 @@
           <div class="d-flex justify-content-between align-items-center">
 
             <b-row>
-              <b-form-checkbox
-                :id="atividade.titulo + '-' + id"
-                :name="atividade.titulo + '-' + id"
-                value="accepted"
-                unchecked-value="not_accepted"
-              />
-              <div v-b-toggle.id>
+              <div class="ml-3" v-b-toggle="atividade.titulo + '-' + index">
                 {{ atividade.titulo }}
                 <b-icon-arrow-down />
               </div>
             </b-row>
 
             <div>
-              <b-badge variant="danger" pill>
-                A Fazer
+              <b-badge v-if="atividade.status == 1" variant="info" pill>
+                {{ '' }}
+              </b-badge>
+              <b-badge v-if="atividade.status == 2" variant="success" pill>
+                {{ '' }}
+              </b-badge>
+              <b-badge v-if="atividade.status == 3" variant="warning" pill>
+                {{ '' }}
+              </b-badge>
+              <b-badge v-if="atividade.status == 4" variant="danger" pill>
+                {{ '' }}
               </b-badge>
             </div>
           </div>
 
-          <b-collapse id="collapse-1" class="mt-2">
-            
-            <b-card>
-
-              <b-row>
-                <b-col>
-                  <p>Víncular ao Endereço:</p>
+          <b-collapse :id="atividade.titulo + '-' + index" class="mt-2">
+   
+              <b-row v-if="atividade.descricao">
+                <b-col cols="12">
+                  <p>{{ atividade.descricao }}</p>
                 </b-col>
               </b-row>
 
-              <b-row>
-                <b-col cols="10">
-                  <b-form-select size="sm"></b-form-select>
-                </b-col>
-                <b-col cols="2">
-                  <b-button size="sm" pill variant="primary">
-                    Novo
-                  </b-button>
-                </b-col>
+              <b-row class="ml-1 mb-3 d-flex justify-content-left" align-self="end">
+                <button-icon v-if="atividade.status > 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="box-arrow-in-up" text="Restaurar" color="outline-info"/>
+                <button-icon v-if="atividade.status == 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="unlock" text="Reabrir" color="outline-info"/>
+                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 2)" class="mr-3" :id="atividade.id" icon="check" text="Concluir" color="outline-success"/>
+                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 3)" class="mr-3" :id="atividade.id" icon="box-arrow-in-down" text="Arquivar" color="outline-warning"/>
+                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 4)" icon="x-circle" :id="atividade.id" text="Excluir" color="outline-danger"/>
               </b-row>
 
-            </b-card>
+              <b-row>
+                <b-col cols="12">
+                  <b-form-select size="sm" v-model="atividade.endereco_id">
+                    <b-form-select-option :value="endereco.id" v-for="(endereco, index) of enderecos" :key="index">
+                      {{endereco.rua}}
+                    </b-form-select-option>
+                    <b-form-select-option :value="null">
+                      Vincular a um endereço
+                    </b-form-select-option>
+                  </b-form-select>
+                </b-col>
+              </b-row>
 
           </b-collapse>
 
@@ -69,48 +78,60 @@
 
   </b-row>
 </b-container>
-  <!-- <ul class="todo-list">
-    <transition-group name="fade">
-     <li v-for="(todo, index) in sortedTasks"
-       class="todo" :key="index">
-       <div class="view">
-          <input class="toggle" @click="completeTask(todo)" type="checkbox">
-          <label  v-bind:class="{ 'todo-completed': todo.completed }" >{{ todo.title }}</label>
-       </div>
-     </li>
-   </transition-group>
-   </ul> -->
 </template>
 
 <script>
 
 import ListFilter from './ListFilter';
+import Botao from './Botao';
+// import _ from 'lodash';
 
 export default {
   data() {
     return {
       atividades: [],
+      enderecos: [],
+      filterList: []
     }
   },
   computed: {
-    sortedTasks: function () {
-      return this.$store.getters.sortedTasks
-    }
+
+    // atividadesFiltradas: () => {
+    //   return this.atividades;
+    // },
+
   },
   components: {
-    'list-filter': ListFilter
+    'list-filter': ListFilter,
+    'button-icon': Botao
   },
+
   methods: {
-    completeTask (task) {
-      this.$store.commit('completeTask', { task })
+
+    adicionaFiltro(listFilter) {
+      this.filterList = listFilter;
+    },
+
+    updateStatus (atividade, status) {
+
+      atividade.status = status;
+
+      this.$http.put(`http://localhost:3333/atividades/${atividade.id}`, 
+        JSON.stringify({status: status})).then(resp => {
+          console.log('Resp', resp);
+        })
     }
+
   },
+
   created() {
     
     this.$http.get('http://localhost:3333/atividades').then(resp => {
-      console.log('Resp ', resp);
-      
       this.atividades = resp.body.atividades;
+    });
+
+    this.$http.get('http://localhost:3333/enderecos').then(resp => {
+      this.enderecos = resp.body.enderecos;
     });
     
   },
