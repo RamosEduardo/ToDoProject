@@ -3,16 +3,22 @@
   <b-row>
 
     <b-col cols="3">
-
-      <list-filter @adicionaFiltro='adicionaFiltro'/>
+      <b-row>
+        <list-filter @adicionaFiltro='adicionaFiltro'/>
+      </b-row>
+      <b-row class="mt-4">
+        <new-address />
+      </b-row>
     
     </b-col>
 
     <b-col cols="9">
 
+      <input-task @adiciona-tarefa='setTarefa' class="mb-4"/>
+
       <b-list-group>
 
-        <b-list-group-item v-for="(atividade, index) in atividades" :key="index">
+        <b-list-group-item v-for="(atividade, index) in atividadesFiltradas" :key="index">
 
           <div class="d-flex justify-content-between align-items-center">
 
@@ -40,25 +46,51 @@
           </div>
 
           <b-collapse :id="atividade.titulo + '-' + index" class="mt-2">
-   
-              <b-row v-if="atividade.descricao">
+
+              <b-row class="mb-3 d-flex justify-content-between" align-self="end">
+                <b-row class="ml-3">
+                  <button-icon size="3" v-if="atividade.status > 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="box-arrow-in-up" color="outline-info"/>
+                  <button-icon size="3" v-if="atividade.status == 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="unlock" color="outline-info"/>
+                  <button-icon size="3" v-if="atividade.status < 2" @open="updateStatus(atividade, 2)" class="mr-3" :id="atividade.id" icon="check" color="outline-success"/>
+                  <button-icon size="3" v-if="atividade.status < 2" @open="updateStatus(atividade, 3)" class="mr-3" :id="atividade.id" icon="box-arrow-in-down" color="outline-warning"/>
+                  <button-icon size="3" v-if="atividade.status < 2" @open="updateStatus(atividade, 4)" class="mr-3" icon="x-circle" :id="atividade.id" color="outline-danger"/>
+                </b-row>
+                <div class="mr-3">
+                  <button-icon size="3" v-if="atividade.status < 2" @open="viewDescription = !viewDescription" icon="chat-square-dots" :id="atividade.id" color="outline-info" text="Descrição"/>
+                </div>
+              </b-row>
+
+              <b-row v-if="atividade.status == 1" v-show="viewDescription">
                 <b-col cols="12">
-                  <p>{{ atividade.descricao }}</p>
+                  <b-form-textarea
+                    @blur="setDescriptionTask(atividade)"
+                    id="textarea"
+                    v-model="atividade.descricao"
+                    placeholder="Enter something..."
+                    rows="3"
+                    max-rows="6"
+                  ></b-form-textarea>
                 </b-col>
               </b-row>
 
-              <b-row class="ml-1 mb-3 d-flex justify-content-left" align-self="end">
-                <button-icon v-if="atividade.status > 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="box-arrow-in-up" text="Restaurar" color="outline-info"/>
-                <button-icon v-if="atividade.status == 2" @open="updateStatus(atividade, 1)" class="mr-3" :id="atividade.id" icon="unlock" text="Reabrir" color="outline-info"/>
-                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 2)" class="mr-3" :id="atividade.id" icon="check" text="Concluir" color="outline-success"/>
-                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 3)" class="mr-3" :id="atividade.id" icon="box-arrow-in-down" text="Arquivar" color="outline-warning"/>
-                <button-icon v-if="atividade.status < 2" @open="updateStatus(atividade, 4)" icon="x-circle" :id="atividade.id" text="Excluir" color="outline-danger"/>
+              <b-row v-else v-show="atividade.descricao">
+                <b-col cols="12">
+                  <b-form-textarea
+                    :disabled=true
+                    @blur="setDescriptionTask(atividade)"
+                    id="textarea"
+                    v-model="atividade.descricao"
+                    placeholder="Enter something..."
+                    rows="3"
+                    max-rows="6"
+                  ></b-form-textarea>
+                </b-col>
               </b-row>
 
-              <b-row>
+              <b-row class="mt-3">
                 <b-col cols="12">
-                  <b-form-select size="sm" v-model="atividade.endereco_id">
-                    <b-form-select-option :value="endereco.id" v-for="(endereco, index) of enderecos" :key="index">
+                  <b-form-select :disabled="atividade.status !== 1 ? true : false" size="sm" @input="setEndereco(atividade)" v-model="atividade.endereco_id">
+                    <b-form-select-option @change="setEndereco(endereco)" :value="endereco.id" v-for="(endereco, index) of enderecos" :key="index">
                       {{endereco.rua}}
                     </b-form-select-option>
                     <b-form-select-option :value="null">
@@ -84,29 +116,66 @@
 
 import ListFilter from './ListFilter';
 import Botao from './Botao';
-// import _ from 'lodash';
+import NewAddress from './NewAddress';
+import InputTask from "./InputTask";
+import _ from 'lodash';
 
 export default {
   data() {
     return {
       atividades: [],
       enderecos: [],
-      filterList: []
+      filterList: ['1'],
+      viewDescription: false
     }
   },
   computed: {
 
-    // atividadesFiltradas: () => {
-    //   return this.atividades;
-    // },
+    atividadesFiltradas() {
+
+      if (this.filterList.length > 0) {
+        return this.atividades.filter(atividade => _.indexOf(this.filterList, atividade.status.toString()) >= 0);
+      }
+      return [];
+
+    },
 
   },
   components: {
     'list-filter': ListFilter,
-    'button-icon': Botao
+    'button-icon': Botao,
+    'new-address': NewAddress,
+    "input-task": InputTask,
   },
 
   methods: {
+
+    listTasks() {
+      this.$http.get('http://localhost:3333/atividades').then(resp => {
+        this.atividades = resp.body.atividades;
+      });
+    },
+
+    setTarefa() {
+      this.listTasks();
+    },
+
+    setDescriptionTask(atividade) {
+      this.$http.put(`http://localhost:3333/atividades/${atividade.id}`, 
+      JSON.stringify({descricao: atividade.descricao})).then(resp => {
+        console.log('Resp', resp);
+      })
+    },
+
+    setEndereco(atividade) {
+      console.log('End: ',atividade);
+
+      this.$http.put(`http://localhost:3333/atividades/${atividade.id}`, 
+      JSON.stringify({endereco_id: atividade.endereco_id})).then(resp => {
+        console.log('Resp', resp);
+      })
+
+    },
 
     adicionaFiltro(listFilter) {
       this.filterList = listFilter;
@@ -124,16 +193,14 @@ export default {
 
   },
 
-  created() {
+  async created() {
     
-    this.$http.get('http://localhost:3333/atividades').then(resp => {
-      this.atividades = resp.body.atividades;
-    });
+    await this.listTasks();
 
     this.$http.get('http://localhost:3333/enderecos').then(resp => {
       this.enderecos = resp.body.enderecos;
     });
-    
+
   },
 }
 </script>

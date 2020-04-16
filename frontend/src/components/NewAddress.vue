@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <b-button v-b-modal.modal-scrollable>Cadastrar Endereço</b-button>
+    <b-button @click="showModalAddress = !showModalAddress">Cadastrar Endereço</b-button>
 
-    <b-modal id="modal-scrollable" scrollable title="Cadastrar Endereço">
+    <b-modal id="modal-scrollable" v-model="showModalAddress" scrollable title="Cadastrar Endereço">
       <div>
         <b-input-group prepend="CEP" class="mt-3">
           <b-form-input v-mask="'99999-999'" @blur="checkCep"></b-form-input>
@@ -43,11 +43,11 @@
         </b-col>
       </b-row>
 
-      <template v-slot:modal-footer="{ ok, cancel }">
+      <template v-slot:modal-footer>
         <b-button size="sm" variant="outline-secondary" @click="createAddress()">
           Cadastrar
         </b-button>
-        <b-button size="sm" variant="danger" @click="cancel()">
+        <b-button size="sm" variant="danger" @click="showModalAddress = false">
           Cancelar
         </b-button>
     </template>
@@ -66,6 +66,8 @@ export default {
   data() {
     return {
       address: [],
+      showModalAddress: false,
+      insertSuccess: false
     };
   },
 
@@ -79,17 +81,13 @@ export default {
       this.$http.get('http://api.postmon.com.br/v1/cep/' + cep)
       .then((res) => {
         this.address = res.body
-        console.log(this.address);
-        
-      }, (res) => {
-        console.log(res)
       })
     },
 
     createAddress() {
-      console.log('Endereco ', this.address);
-      this.$http.post('http://localhost:3333/enderecos',this.address).then((res) => {
-        console.log(res.body);
+      this.$http.post('http://localhost:3333/enderecos',this.address).then(() => {
+        this.showModalAddress = false;
+        this.insertSuccess = true;
       });
     },
 
@@ -98,8 +96,5 @@ export default {
     }
   },
 
-  created() {
-    console.log(this.address);
-  },
 };
 </script>

@@ -1,18 +1,14 @@
 <template>
-  <div>
-    <b-navbar type="light" variant="light">
-      <b-nav-text center>
-        <b-nav-form class="centralizar">
-          <b-form-input
-            v-focus="true"
-            @keyup.enter="addTask"
-            class="mr-lg-2"
-            placeholder="Adicionar Tarefa"
-          />
-        </b-nav-form>
-      </b-nav-text>
-    </b-navbar>
-  </div>
+<div>
+
+  <b-form-input
+    v-focus="true"
+    v-model="task"
+    @keyup.enter="addTask"
+    class="mr-lg-2"
+    placeholder="Adicionar Tarefa"
+  />
+</div>
 </template>
 
 <script>
@@ -24,29 +20,31 @@ export default {
   directives: {
     focus: Focus,
   },
+  data () {
+    return {
+      task: '',
+    }
+  },
   methods: {
-    addTask ($event) {
-      let value = $event.target.value
+    addTask () {
+
+      let value = this.task
       let task = this.createTask(value)
 
       this.$http.post('http://localhost:3333/atividades', task).then((resp) => {
         console.log(resp);
-        
-        this.clearField($event)
+        this.clearField()
       });
     },
     createTask (value) {
       let task = new Task()
-      task.completed = false
       task.title = value
       return task
     },
     clearField () {
-      this.$el.querySelector('input').value = ''
+      this.$emit('adiciona-tarefa', this.task);
+      this.task = ''
     }
   }
 }
 </script>
-
-<style>
-</style>

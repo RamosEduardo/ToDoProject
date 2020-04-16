@@ -1,8 +1,9 @@
 <template>
   <div>
     <b-button @click="activeButton()" :variant="color" size="sm" class="d-flex justify-content-between align-items-center pt-10">
-        <b-icon :icon="icon"/>
-        <!-- {{ text }} -->
+        <b-icon v-if="text" :icon="icon" class="mr-2"/>
+        <b-icon v-else :icon="icon"/>
+        {{ text ? text : '' }}
     </b-button>
   </div>
 </template>
@@ -23,7 +24,7 @@ export default {
     },
 
     text: {
-      required: true,
+      required: false,
       type: String
     }
   },
