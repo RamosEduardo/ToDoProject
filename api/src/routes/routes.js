@@ -4,6 +4,7 @@ const routes = express.Router();
 
 const AtividadeController = require('../controller/AtividadeController');
 const EnderecoController = require('../controller/EnderecoController');
+const UserController = require('../controller/UserController');
 
 routes.use(express.json());
 routes.use(cors());
@@ -17,5 +18,7 @@ routes.post('/enderecos', EnderecoController.create);
 routes.get('/enderecos', EnderecoController.index);
 routes.put('/enderecos/:id', EnderecoController.update);
 routes.delete('/enderecos/:id', EnderecoController.delete);
+
+routes.post('/users', UserController.create);
 
 module.exports = routes;
