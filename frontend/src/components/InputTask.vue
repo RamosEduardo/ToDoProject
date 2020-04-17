@@ -32,7 +32,12 @@ export default {
       let task = this.createTask(value)
 
       this.$http.post('http://localhost:3333/atividades', task).then((resp) => {
-        console.log(resp);
+        const { title, status } = task
+        this.task = {
+          id: resp.body.id[0],
+          titulo: title,
+          status
+        }
         this.clearField()
       });
     },

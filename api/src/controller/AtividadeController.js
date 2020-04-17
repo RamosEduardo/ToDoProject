@@ -23,22 +23,17 @@ module.exports = {
       
       const { title, status, descricao, endereco_id} = req.body;
 
-      const teste = await connection('atividades').insert({
+      const id = await connection('atividades').insert({
         titulo: title,
         status: 1,
         descricao,
         endereco_id
       });
 
-      console.log("teste ", teste);
-
-      return res.status(201).json('Sucess');
+      return res.status(200).json({id});
     },
 
     async update(req, res) {
-      
-      console.log(req.body);
-      console.log(req.params);
       
       const { title, status, descricao, endereco_id} = req.body;
       const { id } = req.params; 
@@ -53,5 +48,15 @@ module.exports = {
       })
 
       return res.status(200).json('Sucess');
-  }
+    },
+
+    async delete(req, res) {
+      const { id } = req.params;
+
+      await connection('atividades')
+      .where('id',id)
+      .delete()
+
+      res.status(200).send('Sucess Removed')
+    }
 }

@@ -11,6 +11,7 @@ routes.use(cors());
 routes.post('/atividades', AtividadeController.create);
 routes.get('/atividades', AtividadeController.index);
 routes.put('/atividades/:id', AtividadeController.update);
+routes.delete('/atividades/:id', AtividadeController.delete);
 
 routes.post('/enderecos', EnderecoController.create);
 routes.get('/enderecos', EnderecoController.index);

@@ -10,7 +10,7 @@ module.exports = {
     
     const { cep, logradouro, numero, bairro, cidade, estado} = req.body;
 
-    await connection('enderecos').insert({
+    const address = await connection('enderecos').insert({
       cep,
       rua: logradouro,
       numero,
@@ -19,7 +19,7 @@ module.exports = {
       estado
     });
 
-    return res.status(201).send('Sucess');
+    return res.status(201).json(address);
   },
 
   async update(req, res) {

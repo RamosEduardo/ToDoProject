@@ -1,7 +1,15 @@
 <template>
   <div>
 
-    <b-button @click="showModalAddress = !showModalAddress">Cadastrar Endereço</b-button>
+    <b-button
+      style="width: 100%"
+      @click="showModalAddress = !showModalAddress" 
+      variant="outline-danger" 
+      size="sm" 
+      class="d-flex justify-content-center align-items-center pt-10"
+    >
+      Cadastrar Endereço
+    </b-button>
 
     <b-modal id="modal-scrollable" v-model="showModalAddress" scrollable title="Cadastrar Endereço">
       <div>
@@ -59,13 +67,12 @@
 
 <script>
 
-// import Address from "../models/Address";
 import AwesomeMask from 'awesome-mask';
 
 export default {
   data() {
     return {
-      address: [],
+      address: {},
       showModalAddress: false,
       insertSuccess: false
     };
@@ -85,7 +92,14 @@ export default {
     },
 
     createAddress() {
-      this.$http.post('http://localhost:3333/enderecos',this.address).then(() => {
+      this.$http.post('http://localhost:3333/enderecos',this.address).then((response) => {
+        
+        this.address.id = response.data[0];
+        this.address.rua = this.address.logradouro;
+
+        this.$emit('set-new-address', this.address)
+
+        this.address = {};
         this.showModalAddress = false;
         this.insertSuccess = true;
       });
