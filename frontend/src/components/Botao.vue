@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button @click="activeButton()" :variant="color" size="sm" class="d-flex justify-content-between align-items-center pt-10">
+    <b-button @click="activeButton()" :variant="color" style="bo" size="sm" class="d-flex justify-content-between align-items-center pt-10">
         <b-icon v-if="text" :icon="icon" class="mr-2"/>
         <b-icon v-else :icon="icon"/>
         {{ text ? text : '' }}

@@ -1,25 +1,12 @@
 <template>
-  <b-col>
-    <b-form-select :disabled="atividade.status !== 1 ? true : false" 
-      size="sm" 
-      v-model="atividade.endereco_id"
-      @input="setEndereco(atividade.id, atividade.endereco_id)" 
-    >
-
-
-      <b-form-select-option 
-        :value="endereco.id" 
-        v-for="(endereco, index) of enderecos" 
-        :key="index"
-      >
-        {{endereco.rua}}
-      </b-form-select-option>
-
-      <b-form-select-option :value="null">
-        Vincular a um endereço
-      </b-form-select-option>
-    </b-form-select>
-  </b-col>
+    <div>
+      <b-form-select 
+        v-model="atividade.endereco_id"
+        :options="listAddressMounted" 
+        :disabled="atividade.status !== 1 ? true : false"
+        @input="setEndereco(atividade.id, atividade.endereco_id)"
+      />
+    </div>
 </template>
 
 <script>
@@ -38,6 +25,17 @@ export default {
     newAddress: {
       type: Object
     }
+  },
+
+  computed: {
+    listAddressMounted() {
+      let endereco = this.enderecos.map( endereco => {
+        let text = `${endereco.rua}, ${endereco.numero}, ${endereco.bairro} - ${endereco.cidade} / ${endereco.estado}`
+        let value = endereco.id;
+        return {value,text}
+      });
+      return endereco
+    } 
   },
 
   methods: {

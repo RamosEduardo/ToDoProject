@@ -1,71 +1,12 @@
 <template>
-  <section class="todoapp">
-    <nav-bar></nav-bar>
+  <div id="app" class="app">
 
-    <task-list style="margin-top:10px"></task-list>
-  </section>
+    <router-view>
+
+    </router-view>
+
+  </div>
 </template>
 <script>
 
-import NavBar from "./components/Nav";
-import TaskList from "./components/TaskList";
-
-export default {
-  name: "App",
-  components: {
-    "nav-bar": NavBar,
-    "task-list": TaskList,
-  },
-};
 </script>
-<style>
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-/*  */
-button {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  font-size: 100%;
-  vertical-align: baseline;
-  font-family: inherit;
-  font-weight: inherit;
-  color: inherit;
-  -webkit-appearance: none;
-  appearance: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-/*  */
-:focus {
-  outline: 0;
-}
-.cep {
-  text-decoration: none;
-  font-size: 16px;
-  display: block;
-  padding: 5px;
-  border-top: 1px solid #ededed;
-  text-align: center;
-}
-.hidden {
-  display: none;
-}
-
-.todoapp h1 {
-  position: absolute;
-  top: -155px;
-  width: 100%;
-  font-size: 100px;
-  font-weight: 100;
-  text-align: center;
-  color: rgba(175, 47, 47, 0.15);
-  -webkit-text-rendering: optimizeLegibility;
-  -moz-text-rendering: optimizeLegibility;
-  text-rendering: optimizeLegibility;
-}
-</style>

@@ -17,9 +17,9 @@
       <b-col lg="9" md="9" sm="12">
         <input-task @adiciona-tarefa="setTarefa" class="mb-4" />
 
-        <b-form-checkbox v-model="viewStatus" switch
-          >Exibir Status</b-form-checkbox
-        >
+        <b-form-checkbox v-model="viewStatus" switch>
+          Exibir Status
+        </b-form-checkbox>
 
         <b-list-group>
           <b-list-group-item
@@ -40,59 +40,24 @@
                   :viewStatus="viewStatus"
                 />
               </div>
+
             </div>
 
             <b-collapse :id="atividade.titulo + '-' + index" class="mt-2">
+              
               <b-row
                 class="mb-3 d-flex justify-content-between"
                 align-self="end"
               >
+
                 <b-row class="ml-3">
-                  <button-icon
-                    size="3"
-                    v-if="atividade.status > 2"
-                    @open="updateStatus(atividade, 1)"
-                    class="mr-3"
-                    :id="atividade.id"
-                    icon="box-arrow-in-up"
-                    color="outline-info"
-                  />
-                  <button-icon
-                    size="3"
-                    v-if="atividade.status == 2"
-                    @open="updateStatus(atividade, 1)"
-                    class="mr-3"
-                    :id="atividade.id"
-                    icon="unlock"
-                    color="outline-info"
-                  />
-                  <button-icon
-                    size="3"
-                    v-if="atividade.status < 2"
-                    @open="updateStatus(atividade, 2)"
-                    class="mr-3"
-                    :id="atividade.id"
-                    icon="check"
-                    color="outline-success"
-                  />
-                  <button-icon
-                    size="3"
-                    v-if="atividade.status < 2"
-                    @open="updateStatus(atividade, 3)"
-                    class="mr-3"
-                    :id="atividade.id"
-                    icon="box-arrow-in-down"
-                    color="outline-warning"
-                  />
-                  <button-icon
-                    size="3"
-                    v-if="atividade.status < 2"
-                    @open="updateStatus(atividade, 4)"
-                    class="mr-3"
-                    icon="x-circle"
-                    :id="atividade.id"
-                    color="outline-danger"
-                  />
+                  <b-col>
+                    <buttons-actions
+                      name="actions"
+                      @update-status="updateStatus"
+                      :atividade="atividade" 
+                    />
+                  </b-col>
                 </b-row>
 
                 <div class="mr-3">
@@ -106,6 +71,7 @@
                     text="Descrição"
                   />
                 </div>
+
               </b-row>
 
               <b-row v-if="atividade.status == 1" v-show="viewDescription">
@@ -159,6 +125,7 @@ import NewAddress from "./NewAddress";
 import InputTask from "./InputTask";
 import StatusBadge from "./StatusBadge";
 import AddressSelector from "./AddressSelector";
+import BotaoActions from "./BotaoActions";
 
 import _ from "lodash";
 
@@ -241,7 +208,8 @@ export default {
     "new-address": NewAddress,
     "input-task": InputTask,
     "status-badge": StatusBadge,
-    "address-selector": AddressSelector
+    "address-selector": AddressSelector,
+    "buttons-actions": BotaoActions
   },
 
   async created() {
